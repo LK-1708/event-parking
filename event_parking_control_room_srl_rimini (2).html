@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EVENT PARKING - Control Room Rimini</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+body{background:#0b132b;color:#f8fafc;font-family:system-ui,-apple-system,sans-serif}
+.glass{background:#1c2541;border:1px solid #3a506b}
+@media print{nav,header,#btn-box{display:none!important}#pass-card{border:2px solid #000;color:#000;background:#fff}}
+</style>
+</head>
+<body class="min-h-screen flex flex-col p-3">
+
+<header class="max-w-4xl w-full mx-auto flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-slate-700">
+  <div>
+    <h1 class="font-black text-cyan-400 text-lg tracking-wide flex items-center gap-1">
+      🅿️ EVENT PARKING <span class="bg-amber-400 text-slate-950 text-[10px] px-1.5 py-0.5 rounded font-black">RIMINI</span>
+    </h1>
+    <p class="text-[10px] text-slate-400">Control Room Srl - Security & Access</p>
+  </div>
+  <nav class="flex gap-1 text-xs font-mono">
+    <button onclick="tab('gate')" id="btn-gate" class="px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-bold">VARCO</button>
+    <button onclick="tab('form')" id="btn-form" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300">REGISTRA PASS</button>
+    <button onclick="pwdAdmin()" id="btn-adm" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300">ADMIN</button>
+  </nav>
+</header>
+
+<main class="max-w-4xl w-full mx-auto flex-1 mt-3 space-y-3">
+  <!-- Metrics -->
+  <div class="grid grid-cols-3 gap-2 text-center text-xs font-mono">
+    <div class="glass p-2 rounded-xl border-t-2 border-cyan-400">
+      <span class="text-[10px] text-slate-400 block">PARCHEGGIO</span>
+      <b id="d-name" class="text-cyan-300 truncate block">Fiera & Palasport</b>
+    </div>
+    <div class="glass p-2 rounded-xl border-t-2 border-amber-400">
+      <span class="text-[10px] text-slate-400 block">POSTI</span>
+      <b id="d-cap" class="text-amber-300 block">0 / 250</b>
+    </div>
+    <div class="glass p-2 rounded-xl border-t-2 border-emerald-400">
+      <span class="text-[10px] text-slate-400 block">INGRESSI</span>
+      <b id="d-in" class="text-emerald-300 block">0 Ingressi</b>
+    </div>
+  </div>
+
+  <!-- TAB VARCO -->
+  <section id="v-gate" class="glass p-4 rounded-xl space-y-3">
+    <div class="text-xs font-mono text-cyan-400 font-bold">CONTROLLO ACCESSO VEICOLI</div>
+    <div class="flex gap-2">
+      <input type="text" id="chk-plate" placeholder="DIGITA TARGA (ES: AA123BB)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-center font-mono font-bold uppercase text-white tracking-widest text-sm outline-none focus:border-cyan-400">
+      <button onclick="verifyPlate()" class="bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold px-4 rounded-lg font-mono text-xs">VERIFICA</button>
+    </div>
+
+    <!-- Output Box -->
+    <div id="gate-res" class="p-6 rounded-xl border border-slate-700 text-center min-h-[160px] flex flex-col justify-center items-center">
+      <div id="res-idle">
+        <div class="text-3xl mb-1">🛡️</div>
+        <p class="font-mono text-xs text-slate-400">Inserisci una targa per autorizzare l'accesso.</p>
+      </div>
+      <div id="res-ok" class="hidden space-y-2">
+        <div class="w-12 h-12 bg-emerald-500 text-slate-950 text-2xl font-black rounded-full flex items-center justify-center mx-auto">✓</div>
+        <h2 class="text-xl font-black text-emerald-400">ACCESSO AUTORIZZATO</h2>
+        <div id="ok-plate" class="text-2xl font-black font-mono tracking-widest text-white">--</div>
+        <p id="ok-info" class="text-xs font-mono text-slate-300">--</p>
+      </div>
+      <div id="res-ko" class="hidden space-y-2">
+        <div class="w-12 h-12 bg-rose-500 text-white text-2xl font-black rounded-full flex items-center justify-center mx-auto">✕</div>
+        <h2 class="text-xl font-black text-rose-400">ACCESSO NEGATO</h2>
+        <div id="ko-plate" class="text-xl font-black font-mono tracking-widest text-rose-300">--</div>
+        <p id="ko-reason" class="text-xs font-mono text-rose-400">TARGA NON REGISTRATA</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB REGISTRAZIONE PASS -->
+  <section id="v-form" class="hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div class="glass p-4 rounded-xl space-y-2 text-xs font-mono">
+      <div class="font-bold text-amber-400 uppercase">MODULO REGISTRAZIONE PASS</div>
+      <form onsubmit="savePass(event)" class="space-y-2">
+        <div>
+          <label class="block text-slate-400">Azienda / Gruppo *</label>
+          <input type="text" id="f-comp" required class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+        </div>
+        <div>
+          <label class="block text-slate-400">Autista *</label>
+          <input type="text" id="f-driv" required class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+        </div>
+        <div>
+          <label class="block text-slate-400">Targa Veicolo *</label>
+          <input type="text" id="f-plat" required class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-bold uppercase tracking-wider">
+        </div>
+        <div>
+          <label class="block text-slate-400">Cellulare / WhatsApp *</label>
+          <input type="tel" id="f-phon" required class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg mt-2 text-xs">
+          GENERA QR PASS IMMEDIATO
+        </button>
+      </form>
+    </div>
+
+    <!-- Pass Ticket Result -->
+    <div class="space-y-2">
+      <div id="pass-card" class="bg-white text-slate-950 p-4 rounded-xl border text-center font-mono space-y-2">
+        <h3 id="card-pname" class="font-black text-sm uppercase">FIERA & PALASPORT</h3>
+        <p class="text-[9px] text-slate-500">Control Room Srl - Pass Valido</p>
+        <div class="bg-slate-100 p-1.5 rounded border border-slate-300">
+          <span class="text-[9px] text-slate-500 block">TARGA AUTORIZZATA</span>
+          <div id="card-plate" class="text-2xl font-black tracking-widest text-slate-900">--</div>
+        </div>
+        <div id="qr-box" class="flex justify-center p-1 bg-white"></div>
+        <div class="text-[10px] text-left border-t border-slate-300 pt-1 space-y-0.5 text-slate-700">
+          <div>Azienda: <b id="card-comp" class="text-slate-900">--</b></div>
+          <div>Autista: <b id="card-driv" class="text-slate-900">--</b></div>
+        </div>
+      </div>
+      <div id="btn-box" class="flex gap-1 font-mono text-[11px]">
+        <button onclick="shareWA()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-1.5 rounded text-white font-bold">WhatsApp</button>
+        <button onclick="openMaps()" class="flex-1 bg-blue-600 hover:bg-blue-500 py-1.5 rounded text-white font-bold">Mappe GPS</button>
+        <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded text-white">Stampa</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB ADMIN -->
+  <section id="v-adm" class="hidden glass p-4 rounded-xl space-y-3 text-xs font-mono">
+    <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+      <b class="text-cyan-300">IMPOSTAZIONI E ANAGRAFICA</b>
+      <button onclick="saveCfg()" class="bg-cyan-400 text-slate-950 font-bold px-3 py-1 rounded">SALVA</button>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div>
+        <label class="block text-slate-400">Nome Parcheggio</label>
+        <input type="text" id="cfg-name" value="Fiera & Palasport" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+      </div>
+      <div>
+        <label class="block text-slate-400">Capienza Totale Posti</label>
+        <input type="number" id="cfg-cap" value="250" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <div class="text-slate-400 mb-1 font-bold">PASS REGISTRATI:</div>
+      <div class="overflow-x-auto max-h-48 overflow-y-auto border border-slate-700 rounded">
+        <table class="w-full text-left text-[11px]">
+          <thead class="bg-slate-900 text-slate-400">
+            <tr><th class="p-1.5">Targa</th><th class="p-1.5">Azienda</th><th class="p-1.5">Autista</th><th class="p-1.5">Cellulare</th></tr>
+          </thead>
+          <tbody id="tbl-body" class="divide-y divide-slate-800"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+let cfg = { name:'Fiera & Palasport', cap:250, entries:0, pwd:'12345' };
+let passes = [];
+let currPass = null;
+let isAdmin = false;
+
+window.onload = function() {
+  updateMetrics();
+  // Se l'URL contiene ?mode=guest apre direttamente il form
+  if (new URLSearchParams(window.location.search).get('mode') === 'guest') {
+    tab('form');
+    document.querySelector('nav').style.display = 'none';
+  }
+};
+
+function tab(id) {
+  ['gate','form','adm'].forEach(t => {
+    document.getElementById('v-'+t).classList.add('hidden');
+    const b = document.getElementById('btn-'+t);
+    if(b) b.className = "px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300";
+  });
+  document.getElementById('v-'+id).classList.remove('hidden');
+  const act = document.getElementById('btn-'+id);
+  if(act) act.className = "px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-bold";
+}
+
+function pwdAdmin() {
+  if (isAdmin) { tab('adm'); return; }
+  const p = prompt('Inserisci password admin:');
+  if (p === cfg.pwd) {
+    isAdmin = true;
+    tab('adm');
+  } else if (p !== null) {
+    alert('Password errata!');
+  }
+}
+
+function verifyPlate() {
+  const q = document.getElementById('chk-plate').value.toUpperCase().replace(/\s+/g,'');
+  if(!q) return;
+  const p = passes.find(x => x.plat === q);
+  document.getElementById('res-idle').classList.add('hidden');
+  document.getElementById('res-ok').classList.add('hidden');
+  document.getElementById('res-ko').classList.add('hidden');
+
+  if (p) {
+    cfg.entries++;
+    updateMetrics();
+    document.getElementById('ok-plate').innerText = p.plat;
+    document.getElementById('ok-info').innerText = `${p.comp} - ${p.driv}`;
+    document.getElementById('res-ok').classList.remove('hidden');
+    document.getElementById('gate-res').style.borderColor = '#10b981';
+  } else {
+    document.getElementById('ko-plate').innerText = q;
+    document.getElementById('res-ko').classList.remove('hidden');
+    document.getElementById('gate-res').style.borderColor = '#f43f5e';
+  }
+}
+
+function savePass(e) {
+  e.preventDefault();
+  const pass = {
+    comp: document.getElementById('f-comp').value.trim(),
+    driv: document.getElementById('f-driv').value.trim(),
+    plat: document.getElementById('f-plat').value.trim().toUpperCase().replace(/\s+/g,''),
+    phon: document.getElementById('f-phon').value.trim()
+  };
+  passes.unshift(pass);
+  currPass = pass;
+  showPassCard(pass);
+  renderTable();
+  alert('Pass generato con successo!');
+}
+
+function showPassCard(p) {
+  document.getElementById('card-pname').innerText = cfg.name;
+  document.getElementById('card-plate').innerText = p.plat;
+  document.getElementById('card-comp').innerText = p.comp;
+  document.getElementById('card-driv').innerText = p.driv;
+
+  const box = document.getElementById('qr-box');
+  box.innerHTML = '';
+  new QRCode(box, { text: p.plat, width: 110, height: 110 });
+}
+
+function shareWA() {
+  if (!currPass) { alert('Nessun pass selezionato'); return; }
+  const txt = `PASS PARCHEGGIO: ${cfg.name}\nTarga: ${currPass.plat}\nAutista: ${currPass.driv}\nAzienda: ${currPass.comp}\nGPS: https://maps.google.com/?q=${encodeURIComponent(cfg.name+', Rimini')}`;
+  window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(txt), '_blank');
+}
+
+function openMaps() {
+  window.open('https://maps.google.com/?q='+encodeURIComponent(cfg.name+', Rimini'), '_blank');
+}
+
+function saveCfg() {
+  cfg.name = document.getElementById('cfg-name').value.trim() || cfg.name;
+  cfg.cap = parseInt(document.getElementById('cfg-cap').value) || cfg.cap;
+  updateMetrics();
+  alert('Configurazione salvata');
+}
+
+function updateMetrics() {
+  document.getElementById('d-name').innerText = cfg.name;
+  document.getElementById('d-cap').innerText = `${cfg.entries} / ${cfg.cap}`;
+  document.getElementById('d-in').innerText = `${cfg.entries} Ingressi`;
+}
+
+function renderTable() {
+  const tb = document.getElementById('tbl-body');
+  tb.innerHTML = '';
+  passes.forEach(p => {
+    const r = document.createElement('tr');
+    r.innerHTML = `<td class="p-1.5 font-bold text-white">${p.plat}</td><td class="p-1.5 text-slate-300">${p.comp}</td><td class="p-1.5 text-slate-300">${p.driv}</td><td class="p-1.5 text-cyan-400">${p.phon}</td>`;
+    tb.appendChild(r);
+  });
+}
+</script>
+</body>
+</html>
