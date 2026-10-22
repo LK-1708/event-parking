@@ -387,27 +387,36 @@
         <!-- OPZIONI DI ESPORTAZIONE E CONDIVISIONE DIRETTA IN PDF / PNG / WHATSAPP / EMAIL -->
         <div class="space-y-2 pt-1 font-mono text-xs">
           <!-- PULSANTI SALVATAGGIO FILE: PDF & PNG -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button onclick="scaricaPassPDF('badge-pass-da-scaricare')" class="w-full py-3 px-3 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-rose-950/40 transition">
-              <span class="text-lg">📄</span> SALVA / SCARICA PASS IN PDF
-            </button>
-            <button onclick="scaricaPassGraficoPNG('badge-pass-da-scaricare')" class="w-full py-3 px-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-amber-950/40 transition">
-              <span class="text-lg">📸</span> SALVA COME FOTO (PNG)
-            </button>
+          <div class="p-2.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 space-y-2">
+            <span class="text-[11px] font-bold text-cyan-300 block uppercase">1. File Grafico Pass con QR Code (per stampa o allegato):</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button onclick="scaricaPassPDF('badge-pass-da-scaricare')" class="w-full py-3 px-3 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-rose-950/40 transition">
+                <span class="text-lg">📄</span> SCARICA PASS IN PDF
+              </button>
+              <button onclick="scaricaPassGraficoPNG('badge-pass-da-scaricare')" class="w-full py-3 px-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-amber-950/40 transition">
+                <span class="text-lg">📸</span> SCARICA PASS COME FOTO (PNG)
+              </button>
+            </div>
           </div>
 
-          <!-- CONDIVISIONE DIRETTA (WHATSAPP E EMAIL CON INVIO FILE ALLEGATO O SCHEDA) -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button onclick="inviaPassWhatsAppConFile()" class="w-full py-3 px-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40 transition">
-              <span class="text-lg">💬</span> INVIA PASS SU WHATSAPP
-            </button>
-            <button onclick="inviaPassEmail()" class="w-full py-3 px-3 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-950/40 transition">
-              <span class="text-lg">✉️</span> INVIA PASS PER EMAIL
-            </button>
+          <!-- CONDIVISIONE TESTUALE / LINK NAVIGAZIONE -->
+          <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+            <span class="text-[11px] font-bold text-slate-300 block uppercase">2. Trasmissione Testo & Link Mappe:</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button onclick="inviaPassWhatsAppConFile()" class="w-full py-3 px-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40 transition">
+                <span class="text-lg">💬</span> INVIA INFO E LINK NAVIGAZIONE (WHATSAPP)
+              </button>
+              <button onclick="inviaPassEmail()" class="w-full py-3 px-3 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-950/40 transition">
+                <span class="text-lg">✉️</span> INVIA INFO E LINK NAVIGAZIONE (EMAIL)
+              </button>
+            </div>
           </div>
 
-          <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-400 text-center">
-            💡 <b>Nota per l'invio:</b> Il pulsante WhatsApp genera il PDF/PNG del pass e apre direttamente la finestra di condivisione di sistema per inviare il file grafico o il link digitale al destinatario.
+          <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-400 text-left space-y-1">
+            <p>💡 <b>Come inviare il pass completo di QR Code all'ospite:</b></p>
+            <p class="text-[10px] text-slate-400">1. Clicca su <b>SCARICA PASS IN PDF</b> o <b>SCARICA PASS COME FOTO (PNG)</b> per salvare il badge grafico sul dispositivo.</p>
+            <p class="text-[10px] text-slate-400">2. Invia il file PDF/foto come allegato su WhatsApp o Email all'ospite.</p>
+            <p class="text-[10px] text-slate-400">3. I pulsanti <b>INVIA INFO E LINK NAVIGAZIONE</b> aprono direttamente WhatsApp o l'Email per trasmettere il testo di riepilogo con coordinate Google Maps, Waze e Apple Mappe.</p>
           </div>
         </div>
 
